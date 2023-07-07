@@ -1,6 +1,10 @@
-import requests #Libary for interacting with Webex API
+import requests #Library for interacting with Webex API
 
 import json  
+
+import pandas as pd 
+
+import io #The io module is used for reading and working with streams
 
 #from webex_bot.webex_bot import WebexBot 
 
@@ -10,8 +14,8 @@ import json
 
 
 url = "https://webexapis.com/v1/messages" #Global variable that all functions manipulate for sending a request
-botToken = "" #Add your token here, obtained from developer.webex
-sender = "" #Sender email, used for testing purposes. Add your email!
+botToken = "NTc2MzA2NTgtOGJjMC00ZTE0LWFiZDgtZDhhZjY5ZDYxYTFmOGMxNmM2OWUtOTZh_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f" #Add your token here, obtained from developer.webex
+sender = "hcarrill@cisco.com" #Sender email, used for testing purposes. Add your email!
 
 
 def sendMessage(): 
@@ -82,16 +86,19 @@ def printMessageFile(message):
     #The message itself its a dictionary so we should access its content using dictionary sintax                     
         fileUrl = message['files'][0]  #Accesing the first file of the message dictionary
 
-        print(f"The url for the file attached to the message is: {fileUrl}. \n displaying its content....")
+        print(f"The url for the file attached to the message is: {fileUrl}. \n displaying its content in csv format....")
 
-        headers = {"Authorization": f"Bearer {botToken}", "Accept": "application/json"}
+        headers = {"Authorization": f"Bearer {botToken}", "Accept": "text/csv"}
 
         #The url used for this request is not the webex api url that was used before. When the user sent a message containing a file, a new url for the file was created, that's the one we are using.
-        response = requests.get(fileUrl, headers=headers)
+        response = requests.get(fileUrl, headers=headers).content
+
+        df = pd.read_csv(io.StringIO(response.decode('utf-8'))) #Convert response data to an in-memory text string so that pandas can read from it
+
+        print(df.head())
 
 
-
-        print(response.content)
+        print()
 
     else:
         print('The message did not contain a file')
@@ -133,7 +140,7 @@ def main():
     
     #messageID = sendMessage()
     #getMessageInfo(messageID)
-    #listDirectMessages()
+    listDirectMessages()
 
 
 main()
