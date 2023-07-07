@@ -1,5 +1,5 @@
 import flask
-from Bot import BotRequestHandler
+from Bot import BotRequestHandler, Bot
 
 app = flask.Flask(__name__)
 
@@ -12,8 +12,10 @@ def hello():
 def webhook():
     print("RECEIVED EVENT")
     data = flask.request.json
-    personID = data["data"]["personId"]
-    handler.welcomeMessage(personID)
+    print(data)
+    bot =  Bot(data, handler)
+    bot.getCommand()
+    return {}
 
 if __name__ == '__main__':
     handler = BotRequestHandler()
