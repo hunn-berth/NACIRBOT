@@ -3,10 +3,11 @@ import webexteamssdk as wts
 import requests
 import pandas as pd
 import io
+import task_func as tf
 
 class BotRequestHandler():
     def __init__(self):
-        self.token = os.getenv("WEBEX_TEAMS_ACCESS_TOKEN")
+        self.token = "YTRmYWNlNzMtNDYwMy00MGMyLTllMjMtNDM2OTJlYjk4YTY5OWQ3ZWM5NGYtZTNl_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
         self.api = wts.WebexTeamsAPI(access_token=self.token)
 
     def sendMessage(self, personID, text) -> None:
@@ -19,6 +20,8 @@ class BotRequestHandler():
             df = pd.read_csv(io.StringIO(response.decode('utf-8')))
             print(df.head())
             return df
+            
+        
     
     def getMessage(self, messageID) -> str:
         messageObject = self.api.messages.get(messageId=messageID)
@@ -48,5 +51,12 @@ class Bot():
         words = list(self.handler.getMessage(self.messageID).split(" "))
         if words[0] in self.commands:
             print("Executed command" + words[0])
+            self.run_tasks()
         else:
             self.showCommands()
+    
+    def run_tasks(self):
+        if self.files != None:
+            df =  self.handler.retrieveFile(self.files[0])
+            print('se imprimio'+str(df))
+            #print(tf.format_cvs(df))
