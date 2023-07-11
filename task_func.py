@@ -18,19 +18,19 @@ def testReachability(df):
 
     version = re.compile(r'Cisco IOS Software.*,.*, Version (.*),')
     pid = re.compile(r'[C|c]isco\s+([A-Z]+[/-]?[A-Z0-9]{1,}[-/][A-Z0-9]{1,}).*bytes of memory')
-    device = {
+    for index, row in df.iterrows():
+        ip_address = row['IP address']
+        device = {
         'device_type': 'cisco_ios',
         'ip': ip_address,
         'username': 'admin',
         'password': 'cisco!123',
         'secret': 'cisco!123'
-    }
-
-    for index, row in df.iterrows():
-        ip_address = row['IP address']
+        }   
         #ping_reply = os.system(f"ping -c 1 -W 1 {ip_address} > /dev/null 2>&1")
         # For windows users:
         ping_reply = os.system(f"ping -n 1 -w 1 {ip_address}")
+        #ping_reply = os.system(f"ping -n 1 -w 1 {ip_address}")
         # Please keep in mind that for windows users, they may need to run this block of code twice
         if ping_reply == 0:
             df.at[index, 'Reachability'] = 'Reachable'
@@ -58,15 +58,15 @@ def testReachability(df):
 
 def checkNetconf(df):
     config_line = 'restconf'
-    device = {
-        'device_type': 'cisco_ios',
-        'ip': ip_address,
-        'username': 'admin',
-        'password': 'cisco!123',
-        'secret': 'cisco!123'
-    }
     for index, row in df.iterrows():
         ip_address = row['IP address']
+        device = {
+            'device_type': 'cisco_ios',
+            'ip': ip_address,
+            'username': 'admin',
+            'password': 'cisco!123',
+            'secret': 'cisco!123'
+        }
         if row['OS type']== 'IOS-XE':  
             try:
                 connection = ConnectHandler(**device)
@@ -76,7 +76,7 @@ def checkNetconf(df):
                 else:
                     connection.send_command('restconf')
                     #df.at[index, 'Configured restconf'] = "No Restconf"
-                    df.at[index, 'Configured restconf'] = "Restconf enabled"
+                    df.at[index, 'Configured restconf'] = "Restconf not enabled"
                 connection.disconnect()
             except Exception as e:
                 print(f"Failed to retrieve info from {ip_address}: {str(e)}")

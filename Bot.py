@@ -4,6 +4,8 @@ import requests
 import pandas as pd
 import io
 import task_func as tf
+import json
+from io import StringIO
 
 class BotRequestHandler():
     def __init__(self):
@@ -14,23 +16,26 @@ class BotRequestHandler():
         self.api.messages.create(toPersonId=personID, text=text)
     
     def retrieveFile(self, fileURL) -> pd.DataFrame:
-        headers = {"Authorization": f"Bearer {self.token}", "Accept": "text/csv"}
+        headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.get(url=fileURL, headers=headers)
-        if response == 200:
-            df = pd.read_csv(io.StringIO(response.decode('utf-8')))
-            print(df.head())
+        if response.status_code == 200:
+            response_cvs = response.text
+            csvStringIO = StringIO(response_cvs)
+            df = pd.read_csv(csvStringIO, sep=",")
             return df
+        else:
+            print(f"Failed to retive file. Error code: {response.status_code}")
             
         
     
     def getMessage(self, messageID) -> str:
         messageObject = self.api.messages.get(messageId=messageID)
-        print("Message Text" + messageObject.text)
+        #print("Message Text" + messageObject.text)
         return messageObject.text
     
 class Bot():
     def __init__(self, data, handler : BotRequestHandler):
-        self.personId = "Y2lzY29zcGFyazovL3VzL1BFT1BMRS85MmEzYThiYi0zODg2LTRiOWYtODcxMS1lODUyMGYwNDdhOTg"
+        self.personId = "Y2lzY29zcGFyazovL3VzL1dFQkhPT0svMWY4YzkyMzAtZTJiNy00Zjg3LWIwMmUtNDA1NmU3NDg0MTY1"
         self.event = data["event"]
         self.sender = data["data"]["personId"]
         self.roomID = data["data"]["roomId"]
@@ -50,7 +55,7 @@ class Bot():
     def getCommand(self):
         words = list(self.handler.getMessage(self.messageID).split(" "))
         if words[0] in self.commands:
-            print("Executed command" + words[0])
+            print("Executed command:" + words[0])
             self.run_tasks()
         else:
             self.showCommands()
@@ -58,5 +63,9 @@ class Bot():
     def run_tasks(self):
         if self.files != None:
             df =  self.handler.retrieveFile(self.files[0])
-            print('se imprimio'+str(df))
-            #print(tf.format_cvs(df))
+            df = tf.format_cvs(df)
+            df= tf.testReachability(df)
+            df=tf.checkNetconf(df)
+            #df = tf.retriveWithRestconf(df)
+            print(df)
+            
