@@ -19,4 +19,4 @@ def webhook():
 
 if __name__ == '__main__':
     handler = BotRequestHandler()
-    app.run(debug=True)
+    app.run()#debug=True

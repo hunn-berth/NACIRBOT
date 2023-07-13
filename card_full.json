@@ -1,0 +1,156 @@
+{
+"type": "AdaptiveCard",
+"body": [
+    {
+    "type": "ColumnSet",
+    "columns": [
+        {
+        "type": "Column",
+        "items": [
+            {
+            "type": "Image",
+            "style": "Person",
+            "url": "https://developer.webex.com/images/webex-logo-icon-non-contained.svg",
+            "size": "Medium",
+            "height": "50px"
+            }
+        ],
+        "width": "auto"
+        },
+        {
+        "type": "Column",
+        "items": [
+            {
+            "type": "TextBlock",
+            "text": "Webex App",
+            "weight": "Lighter",
+            "color": "Accent"
+            },
+            {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "HEALTH CHECK",
+            "horizontalAlignment": "Left",
+            "wrap": true,
+            "color": "Light",
+            "size": "Large",
+            "spacing": "Small"
+            }
+        ],
+        "width": "stretch"
+        }
+    ]
+    },
+    {
+    "type": "ColumnSet",
+    "columns": [
+        {
+        "type": "Column",
+        "width": 35,
+        "items": [
+            {
+            "type": "TextBlock",
+            "text": "IP ADDRESS:",
+            "color": "Light"
+            },
+            {
+            "type": "TextBlock",
+            "text": "PID:",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "VERSION:",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "REACHABILITY:",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "OS TYPE:",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            }
+        ]
+        },
+        {
+        "type": "Column",
+        "width": 65,
+        "items": [
+            {
+            "type": "TextBlock",
+            "text": "row['ip_address']",
+            "color": "Light"
+            },
+            {
+            "type": "TextBlock",
+            "text": "df[PID]",
+            "color": "Light",
+            "weight": "Lighter",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "df[Version]",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "df[Reachability]",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "df[OS Type]",
+            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            }
+        ]
+        }
+    ],
+    "spacing": "Padding",
+    "horizontalAlignment": "Center"
+    },
+    {
+        "type": "TextBlock",
+        "text": "BUGS BASED THIS PRODCT:",
+        "weight": "Bolder",
+        "color": "Light",
+        "size": "Large"
+    },
+    {
+    "type": "TextBlock",
+    "text": "N/A",
+    "wrap": true
+    },
+    {
+        "type": "TextBlock",
+        "text": "ADVISORY BASED ON PRODUCT",
+        "weight": "Bolder",
+        "color": "Light",
+        "size": "Large"
+    },
+    {
+    "type": "TextBlock",
+    "text": "N/A",
+    "wrap": true
+    }
+],
+"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+"version": "1.3"
+}

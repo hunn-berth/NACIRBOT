@@ -6,6 +6,7 @@ import io
 import task_func as tf
 import json
 from io import StringIO
+import time
 
 class BotRequestHandler():
     def __init__(self):
@@ -105,17 +106,22 @@ class Bot():
             df.to_csv("csv_file", index = False)
 
     def processCards(self, df):
-        with open('card.json') as file:
-            json_data = json.load(file)
 
         for index, row in df.iterrows():
             
-            json_data['body'][1]['columns'][1]['items'][0]['text'] = row['IP address']
-            #json_data['body'][1]['columns'][1]['items'][1]['text'] = row['PID']
-            #json_data['body'][1]['columns'][1]['items'][2]['text'] = row['Version']
-            json_data['body'][1]['columns'][1]['items'][3]['text'] = row['Reachability']
-            json_data['body'][1]['columns'][1]['items'][4]['text'] = row['OS type']
-
+            if row['Reachability'] == 'Reachable':
+                with open('card_full.json') as file:
+                    json_data = json.load(file)
+                json_data['body'][1]['columns'][1]['items'][0]['text'] = row['IP address']
+                json_data['body'][1]['columns'][1]['items'][1]['text'] = row['PID']
+                json_data['body'][1]['columns'][1]['items'][2]['text'] = row['Version']
+                json_data['body'][1]['columns'][1]['items'][3]['text'] = row['Reachability']
+                json_data['body'][1]['columns'][1]['items'][4]['text'] = row['OS type']
+            else:
+                with open('card_no.json') as file:
+                    json_data = json.load(file)
+                json_data['body'][1]['columns'][1]['items'][1]['text'] = row['Reachability']
+                json_data['body'][1]['columns'][1]['items'][0]['text'] = row['IP address']
 
             attachments= [
             {  
@@ -124,6 +130,7 @@ class Bot():
             }
             ]
             self.handler.sendCard(self.sender, attachments)
+            time.sleep(2)
 
 
 
