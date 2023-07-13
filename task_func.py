@@ -76,7 +76,7 @@ def checkNetconf(df):
                 else:
                     connection.send_command('restconf')
                     #df.at[index, 'Configured restconf'] = "No Restconf"
-                    df.at[index, 'Configured restconf'] = "Restconf not enabled"
+                    df.at[index, 'Configured restconf'] = "Restconf was enabled"
                 connection.disconnect()
             except Exception as e:
                 print(f"Failed to retrieve info from {ip_address}: {str(e)}")
@@ -160,7 +160,6 @@ def getToken():
         # Print your token
         print(f'Access token: {token}')
         return token
-        
     else:
         print(f'Request failed with status code {response.status_code}')
         return False
@@ -171,6 +170,7 @@ def get_potentialBugs(df):
 
     token = getToken()
     if token == False:
+        print("bug en bug")
         return df
     else:
         df['Potential_bugs'] = ''
