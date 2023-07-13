@@ -117,11 +117,29 @@ class Bot():
                 json_data['body'][1]['columns'][1]['items'][2]['text'] = row['Version']
                 json_data['body'][1]['columns'][1]['items'][3]['text'] = row['Reachability']
                 json_data['body'][1]['columns'][1]['items'][4]['text'] = row['OS type']
+                string_bugs = '-'
+                if type(row['Potential_bugs']) == list:
+                    for e in row['Potential_bugs']:
+                        string_bugs += '['+ e + ']' + '(https://bst.cisco.com/quickview/bug/'+e+')\n-'   
+                else:
+                    string_bugs = '-'
+                json_data['body'][3]['text'] = string_bugs
+                if row['OS type'] == 'IOS-XE':
+                    string_PSIRT = '-'
+                    if type(row['PSIRT']) == list: 
+                        for e in row['PSIRT']:
+                           string_PSIRT += '['+ e + ']' + '(https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/'+e+')\n-'
+                    else:
+                        string_PSIRT = '-'
+                    json_data['body'][5]['text'] = string_PSIRT
             else:
                 with open('card_no.json') as file:
                     json_data = json.load(file)
                 json_data['body'][1]['columns'][1]['items'][1]['text'] = row['Reachability']
                 json_data['body'][1]['columns'][1]['items'][0]['text'] = row['IP address']
+
+
+            #json_data['body'][5]['text'] = row['OS type']
 
             attachments= [
             {  
