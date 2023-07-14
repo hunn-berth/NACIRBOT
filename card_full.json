@@ -9,9 +9,8 @@
         "items": [
             {
             "type": "Image",
-            "style": "Person",
-            "url": "https://developer.webex.com/images/webex-logo-icon-non-contained.svg",
-            "size": "Medium",
+            "url": "https://www.svgrepo.com/show/345402/network-internet-online-connection-health-global-care.svg",
+            "size": "small",
             "height": "50px"
             }
         ],
@@ -56,28 +55,36 @@
             {
             "type": "TextBlock",
             "text": "PID:",
-            "weight": "Lighter",
             "color": "Light",
             "spacing": "Small"
             },
             {
             "type": "TextBlock",
             "text": "VERSION:",
-            "weight": "Lighter",
             "color": "Light",
             "spacing": "Small"
             },
             {
             "type": "TextBlock",
             "text": "REACHABILITY:",
-            "weight": "Lighter",
             "color": "Light",
             "spacing": "Small"
             },
             {
             "type": "TextBlock",
             "text": "OS TYPE:",
-            "weight": "Lighter",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "Restconf:",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "Used memory:",
             "color": "Light",
             "spacing": "Small"
             }
@@ -96,28 +103,36 @@
             "type": "TextBlock",
             "text": "df[PID]",
             "color": "Light",
-            "weight": "Lighter",
             "spacing": "Small"
             },
             {
             "type": "TextBlock",
             "text": "df[Version]",
-            "weight": "Lighter",
             "color": "Light",
             "spacing": "Small"
             },
             {
             "type": "TextBlock",
             "text": "df[Reachability]",
-            "weight": "Lighter",
             "color": "Light",
             "spacing": "Small"
             },
             {
             "type": "TextBlock",
             "text": "df[OS Type]",
-            "weight": "Lighter",
             "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "Not Supported",
+            "color": "Light",
+            "spacing": "Small"
+            },
+            {
+            "type": "TextBlock",
+            "text": "Not Supported",
+            "color": "good",
             "spacing": "Small"
             }
         ]
