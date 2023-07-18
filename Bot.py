@@ -53,6 +53,7 @@ class Bot():
             message =  "Hi, I am NACIRBOT and I will help you to analyze your network devices. Next, you will find the commands available."
             for c in self.commands:
                 message += "\n-{}".format(c)    
+                
     def getCommand(self):
         words = list(self.handler.getMessage(self.messageID).split(" "))
         if words[0] in self.commands:
@@ -62,6 +63,9 @@ class Bot():
             self.showCommands()
     
     def run_tasks(self):
+        """
+        Giving a CSV procees the IP's and get all the information about each device liked to the IP
+        """
         if self.files != None:
             df =  self.handler.retrieveFile(self.files[0])
             df = tf.format_cvs(df)
@@ -71,11 +75,15 @@ class Bot():
             df = tf.get_potentialBugs(df)
             df = tf.get_PSIRT(df)
             self.processCards(df)
-            df.to_csv("csv_file", index = False)
+            #df.to_csv("csv_file", index = False)
 
     def processCards(self, df):
+        """
+        Send information of each device, convert it to a Card and send it throught webex
+        """
         for index, row in df.iterrows():
             if row['Reachability'] == 'Reachable':
+                #If reachable get IP, PID, VERSION, STATUS AND OS
                 with open('card_full.json') as file:
                     json_data = json.load(file)
                 json_data['body'][1]['columns'][1]['items'][0]['text'] = row['IP address']
@@ -83,7 +91,7 @@ class Bot():
                 json_data['body'][1]['columns'][1]['items'][2]['text'] = row['Version']
                 json_data['body'][1]['columns'][1]['items'][3]['text'] = row['Reachability']
                 json_data['body'][1]['columns'][1]['items'][4]['text'] = row['OS type']
-                #Formating Bugs & Hyperlink
+                #Formating Bugs & Hyperlink (Bugs are for IOS & IOS-XE)
                 string_bugs = '-'
                 if type(row['Potential_bugs']) == list:
                     for e in row['Potential_bugs']:
@@ -91,7 +99,7 @@ class Bot():
                 else:
                     string_bugs = '-'
                 json_data['body'][3]['text'] = string_bugs[:-1]
-                #Formating Advisory & Hyperlink
+                #Formating Advisory & Hyperlink (Advisory are for IOS-XE)
                 if row['OS type'] == 'IOS-XE':
                     string_PSIRT = '-'
                     if type(row['PSIRT']) == list: 
@@ -99,23 +107,22 @@ class Bot():
                            string_PSIRT += '['+ e + ']' + '(https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/'+e+')\n-'
                     else:
                         string_PSIRT = '-'
+                    #Data of memory 
                     used_mem_percent =  (int(row['Used_proc_mem']) / int(row['Total_proc_mem']) ) * 100
                     formatted_result = "{:.2f}%".format(used_mem_percent)
-
                     if(used_mem_percent > 30.00):
                         json_data['body'][1]['columns'][1]['items'][6]['color'] = 'attention'
-
+                    #Adding to card the results
                     json_data['body'][5]['text'] = string_PSIRT[:-1]
                     json_data['body'][1]['columns'][1]['items'][5]['text'] = row['Configured restconf']
                     json_data['body'][1]['columns'][1]['items'][6]['text'] = formatted_result
-
-
             else:
+                #if device is not reachable send template with only IP and status
                 with open('card_no.json') as file:
                     json_data = json.load(file)
                 json_data['body'][1]['columns'][1]['items'][1]['text'] = row['Reachability']
                 json_data['body'][1]['columns'][1]['items'][0]['text'] = row['IP address']
-
+            #Load json card template and send it to the user
             attachments= [
             {  
                 "contentType": "application/vnd.microsoft.card.adaptive",

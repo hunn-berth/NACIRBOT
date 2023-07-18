@@ -12,12 +12,15 @@ def format_cvs(df):
 
 
 def testReachability(df):
-    
+    """
+    This function test the reachability to a group of IP and gets the version and PID for each device
+    """
     df['Reachability'] = ''
     df['OS type'] = ''
 
     version = re.compile(r'Cisco IOS Software.*,.*, Version (.*),')
     pid = re.compile(r'[C|c]isco\s+([A-Z]+[/-]?[A-Z0-9]{1,}[-/][A-Z0-9]{1,}).*bytes of memory')
+
     for index, row in df.iterrows():
         ip_address = row['IP address']
         device = {
@@ -30,7 +33,6 @@ def testReachability(df):
         #ping_reply = os.system(f"ping -c 1 -W 1 {ip_address} > /dev/null 2>&1")
         # For windows users:
         ping_reply = os.system(f"ping -n 1 -w 1 {ip_address}")
-        #ping_reply = os.system(f"ping -n 1 -w 1 {ip_address}")
         # Please keep in mind that for windows users, they may need to run this block of code twice
         if ping_reply == 0:
             df.at[index, 'Reachability'] = 'Reachable'
@@ -43,20 +45,20 @@ def testReachability(df):
                     df.at[index, 'OS type'] = "IOS-XE"
                 else:
                     df.at[index, 'OS type'] = "IOS"
-                #print (output)
-                #print (version_output)
-                #print (pid_output)
+                #Saving version and PID
                 df.at[index, 'Version'] = version_output
                 df.at[index, 'PID'] = pid_output
                 connection.disconnect()
             except Exception as e:
                 print(f"Failed to retrieve info from {ip_address}: {str(e)}")
         else:
-            df.at[index, 'Reachability'] = 'Unreachable'       
-    #df.to_csv(csv_file, index = False)
+            df.at[index, 'Reachability'] = 'Unreachable'
     return df 
 
 def checkNetconf(df):
+    """
+    Verify if restconf is enabled in each device
+    """
     config_line = 'restconf'
     for index, row in df.iterrows():
         ip_address = row['IP address']
@@ -75,7 +77,6 @@ def checkNetconf(df):
                     df.at[index, 'Configured restconf'] = "Restconf enabled"
                 else:
                     connection.send_command('restconf')
-                    #df.at[index, 'Configured restconf'] = "No Restconf"
                     df.at[index, 'Configured restconf'] = "Restconf was enabled"
                 connection.disconnect()
             except Exception as e:
@@ -113,7 +114,6 @@ def retriveWithRestconf(df):
                 response = response.json()
                 # Parse the response to only get the Processor total and used memory information
                 memory_statistics = response['Cisco-IOS-XE-memory-oper:memory-statistics']['memory-statistic']
-                # print(response)
                 for element in memory_statistics:
                     if element['name'] == 'Processor':
                         total_memory = element['total-memory']
@@ -134,17 +134,17 @@ def retriveWithRestconf(df):
                 pid_value = response['Cisco-IOS-XE-native:udi']['pid']
                 df.at[index, 'Serial'] = sn_value
                 df.at[index, 'Part_ID_restconf'] = pid_value
-                #print (response)
-
             else:
                 print (f"Received response code: {response.status_code}")
                 df.at[index, 'Serial'] = "Can't retrieve SN"
                 df.at[index, 'Part_ID_restconf'] = "Can't retrieve PID"
-
     return df
 
 
 def getToken():
+    """
+    Get Oauth Token to work with APIX CISCO
+    """
     token = ''
     url = 'https://id.cisco.com/oauth2/default/v1/token'
     data = {
@@ -155,10 +155,7 @@ def getToken():
     response = requests.post(url, data=data)
     # Validate we are getting a 200 status code
     if response.status_code == 200:
-        # Parse the response in json format
         token = response.json().get('access_token')
-        # Print your token
-        print(f'Access token: {token}')
         return token
     else:
         print(f'Request failed with status code {response.status_code}')
@@ -167,97 +164,71 @@ def getToken():
 
 
 def get_potentialBugs(df):
-
+    """
+    Get a list of the potential bugs
+    """
     token = getToken()
     if token == False:
         print("bug en bug")
         return df
     else:
-        df['Potential_bugs'] = ''
-        
+        df['Potential_bugs'] = ''     
         headers = {
             'Authorization': f'Bearer {token}',
-            }
-
+        }
         for index, row in df.iterrows():
-            # Read the column that contains the Part ID of the device
             device_id = row['PID']
             if device_id:
                 try:
                     url = f"https://apix.cisco.com/bug/v3.0/bugs/products/product_id/{device_id}?page_index=1&modified_date=5"
                     response = requests.get(url, headers=headers)
-                    
-                    # Validate the status code as 200
                     if response.status_code == 200:
-                        # Parse the response in json format
                         response_data = (response.json())
-                        #Print the response_data so you can see how to filter it to just keep the bug ID
-                        print (response_data)
-                        
-                        # List comprehension in python: https://realpython.com/list-comprehension-python/
+                        #print (response_data)
                         bug_id = [bug['bug_id'] for bug in response_data['bugs']]
-                        # Update the bug_id information in the proper column/row
                         df.at[index, 'Potential_bugs'] = bug_id
                     else:
                         print(f'Request failed with status code {response.status_code}')
                         df.at[index, 'Potential_bugs'] = 'Wrong API access'
                 except Exception as e:
                     print(f"Failed to retrieve info from {device_id}: {str(e)}")
-        
-            # Now, let's filter the response, and just get the bug_id, everything else, even though is important information
-            # will not be relevant for this task
-
-            # Save the result in a new file named task_3_1
         return df
 
 
 def get_PSIRT(df):
+    """
+    Get a list of the PSIRT Advisory
+    """
     token = getToken()
     if token == False:
         return df
     else:
         df['PSIRT'] = ''
         df['CRITICAL_PSIRT'] = ''
-
-        # Define the proper authorization in the headers field
         headers = {
             'Authorization': f'Bearer {token}',
         }
-
         for index, row in df.iterrows():
-            # Read the column that contains the Part ID of the device
             version = row['Version']
             if version:
                 try:
                     url = f"https://apix.cisco.com/security/advisories/v2/OSType/iosxe?version={version}"
                     response = requests.get(url, headers=headers)
-                    
-                    # Validate the status code as 200
                     if response.status_code == 200:
-                        # Parse the response in json format
                         response_data = (response.json())
-                        #Print the response_data so you can see how to filter it to just keep the bug ID
-                        print (response_data)
-                        
-                        
-                        # List comprehension in python: https://realpython.com/list-comprehension-python/
+                        #print (response_data)
                         advisoryId = [bug['advisoryId'] for bug in response_data['advisories']]
-                        # Update the bug_id information in the proper column/row
                         df.at[index, 'PSIRT'] = advisoryId
-                        
-
+                        #Geting critical bugs (CVSS > 7.5)
                         list_critical=[]
                         for bug in response_data['advisories']:
                             if float(bug['cvssBaseScore']) >= 7.5:
                                 list_critical.append(bug['advisoryId'])
-
                         df.at[index, 'CRITICAL_PSIRT'] = list_critical
-
                     else:
                         print(f'Request failed with status code {response.status_code}')
                         df.at[index, 'PSIRT'] = 'Wrong API access'
                         df.at[index, 'CRITICAL_PSIRT'] = 'Wrong API access'
                 except Exception as e:
                     print(f"Failed to retrieve info from {version}: {str(e)}")
-        
         return df
