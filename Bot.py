@@ -10,9 +10,9 @@ import time
 
 class BotRequestHandler():
     def __init__(self):
-        self.token = ""
+        self.token = "YTRmYWNlNzMtNDYwMy00MGMyLTllMjMtNDM2OTJlYjk4YTY5OWQ3ZWM5NGYtZTNl_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
         self.api = wts.WebexTeamsAPI(access_token=self.token)
-
+        self.df = {}
     def sendMessage(self, personID, text) -> None:
         self.api.messages.create(toPersonId=personID, text=text)
     
@@ -29,6 +29,7 @@ class BotRequestHandler():
             return df
         else:
             print(f"Failed to retive file. Error code: {response.status_code}")
+            return False
 
     def getMessage(self, messageID) -> str:
         messageObject = self.api.messages.get(messageId=messageID)
@@ -45,21 +46,28 @@ class Bot():
             self.files = data["data"]["files"]
         self.handler = handler
         self.messageID = data["data"]["id"]
-        self.commands = ["help", "about", "csv"]
+        self.commands = ["help", "card", "csv"]
         
 
     def showCommands(self):
         if self.personId != self.sender:
             message =  "Hi, I am NACIRBOT and I will help you to analyze your network devices. Next, you will find the commands available."
             for c in self.commands:
-                message += "\n-{}".format(c)    
+                message += "\n-{}".format(c)
+        self.handler.sendMessage(self.sender,message)    
                 
     def getCommand(self):
         words = list(self.handler.getMessage(self.messageID).split(" "))
-        if words[0] in self.commands:
+        selector = words[0]
+        if selector == 'help':
             print("Executed command:" + words[0])
+        elif selector == 'csv': 
             self.run_tasks()
+        elif selector == 'card':
+            temp_df = self.processData()
+            self.processCards(temp_df)
         else:
+            print('no encontre una palabra')
             self.showCommands()
     
     def run_tasks(self):
@@ -69,13 +77,20 @@ class Bot():
         if self.files != None:
             df =  self.handler.retrieveFile(self.files[0])
             df = tf.format_cvs(df)
-            df= tf.testReachability(df)
-            df=tf.checkNetconf(df)
-            df = tf.retriveWithRestconf(df)
-            df = tf.get_potentialBugs(df)
-            df = tf.get_PSIRT(df)
-            self.processCards(df)
+            self.handler.df = df
+            self.handler.sendMessage(self.sender,'Data provided and List of IP saved')
+            #self.processCards(df)
             #df.to_csv("csv_file", index = False)
+        else:
+            self.handler.sendMessage(self.sender,'Missing CVS')
+    
+    def processData(self):
+        df= tf.testReachability(self.handler.df)
+        df=tf.checkNetconf(df)
+        df = tf.retriveWithRestconf(df)
+        df = tf.get_potentialBugs(df)
+        df = tf.get_PSIRT(df)
+        return df
 
     def processCards(self, df):
         """
