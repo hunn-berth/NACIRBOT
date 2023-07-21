@@ -10,9 +10,9 @@ import time
 
 class BotRequestHandler():
     def __init__(self):
-        self.token = "YTRmYWNlNzMtNDYwMy00MGMyLTllMjMtNDM2OTJlYjk4YTY5OWQ3ZWM5NGYtZTNl_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+        self.token = ""
         self.api = wts.WebexTeamsAPI(access_token=self.token)
-        self.df = {}
+        self.df = False
     def sendMessage(self, personID, text) -> None:
         self.api.messages.create(toPersonId=personID, text=text)
     
@@ -47,7 +47,10 @@ class Bot():
         self.handler = handler
         self.messageID = data["data"]["id"]
         self.commands = ["help", "card", "csv"]
-        
+    def explainBot(self):
+        if self.personId != self.sender:
+            message =  "Hi, I am NACIRBOT and I will help you to analyze your network devices health. Next, you will find how to interact with out bot.\n-help: Will show how to interact with the bot\n-csv: Send the cvs command with file with the IPs of the devices to analyze and work\n-card: Retrives the IPs and process and analyzes each device and sends the information"
+        self.handler.sendMessage(self.sender,message)  
 
     def showCommands(self):
         if self.personId != self.sender:
@@ -58,14 +61,24 @@ class Bot():
                 
     def getCommand(self):
         words = list(self.handler.getMessage(self.messageID).split(" "))
-        selector = words[0]
+        selector = words[0].lower()
         if selector == 'help':
+            self.explainBot()
             print("Executed command:" + words[0])
         elif selector == 'csv': 
             self.run_tasks()
         elif selector == 'card':
-            temp_df = self.processData()
-            self.processCards(temp_df)
+            flag = False
+            try:
+                iter(self.handler.df)
+                flag= True
+                print('yes')
+                self.handler.sendMessage(self.sender,'-Procesing your Data, Please Wait Patiently')
+            except TypeError:
+                self.handler.sendMessage(self.sender,'missing ips')
+            if flag:    
+                temp_df = self.processData()
+                self.processCards(temp_df)
         else:
             print('no encontre una palabra')
             self.showCommands()
@@ -74,7 +87,7 @@ class Bot():
         """
         Giving a CSV procees the IP's and get all the information about each device liked to the IP
         """
-        if self.files != None:
+        if hasattr(self, 'files'):
             df =  self.handler.retrieveFile(self.files[0])
             df = tf.format_cvs(df)
             self.handler.df = df
