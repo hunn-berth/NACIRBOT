@@ -26,9 +26,13 @@ class Nacir():
             self.request_handler.send_message(receiver_id=self.receiver_id, text= f'I am sorry.  I did not understand your command, please type help for a list of available commands!')
 
     def send_file_not_attached_message(self):
-            self.request_handler.send_message(receiver_id= self.receiver_id, text = f'You forgot to attach a file, I require a file to execute this command. Please attach one, {self.receiver_name}.')
+        self.request_handler.send_message(receiver_id= self.receiver_id, text = f'You forgot to attach a file, I require a file to execute this command. Please attach one, {self.receiver_name}.')
 
+    def send_file_not_uploaded_previously_message(self):
+        self.request_handler.send_message(receiver_id = self.receiver_id, text = f'You did not upload a CSV file previously, please upload one using the devstat command')
 
+    def send_previous_stats(self, previous_file_url):
+        self.send_devstats(previous_file_url)
 
     def retrieve_message(self, message_id) -> str: 
         message = ""

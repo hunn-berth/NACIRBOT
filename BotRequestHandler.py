@@ -5,8 +5,9 @@ import requests
 class BotRequestHandler():
 
     def __init__(self) -> None:
-        self.api = WebexTeamsAPI()
-        self.API_KEY = os.environ["WEBEX_TEAMS_ACCESS_TOKEN"]
+        self.API_KEY = 'NTc2MzA2NTgtOGJjMC00ZTE0LWFiZDgtZDhhZjY5ZDYxYTFmOGMxNmM2OWUtOTZh_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'
+        self.api = WebexTeamsAPI(access_token = self.API_KEY)
+       
     
 
     def send_message(self, receiver_id, text) -> None:

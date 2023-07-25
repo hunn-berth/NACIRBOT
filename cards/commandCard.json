@@ -63,7 +63,7 @@
                         },
                         {
                             "type": "TextBlock",
-                            "text": "memgraph",
+                            "text": "Prevstats",
                             "weight": "Lighter",
                             "color": "Light",
                             "spacing": "Small"
@@ -89,7 +89,7 @@
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Shows a pie chart comparing memory",
+                            "text": "Provides statistics from last uploaded csv",
                             "weight": "Lighter",
                             "color": "Light",
                             "spacing": "Small"

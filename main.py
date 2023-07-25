@@ -37,19 +37,21 @@ def webhook():
         if 'files' in request_data['data']:
              file_list = request_data['data']['files']
              
-          
-     
         match message: 
              case('help'):
                   nacir.send_command_card()
              case('devstats'):
                   if file_list:
                     nacir.send_devstats(file_list[0])
+                    session['previously_uploaded_file'] = file_list[0]
                   else:
                     nacir.send_file_not_attached_message() 
-             case('memgraph'):
-                  pass
-        
+             case('prevstats'):
+                    try: 
+                         previously_uploaded_file = session.get('previously_uploaded_file')
+                         nacir.send_previous_stats(previously_uploaded_file)
+                    except: 
+                         nacir.send_file_not_uploaded_previously_message()
              case _:
                   nacir.send_command_not_understood_message()
                           
