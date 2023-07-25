@@ -22,7 +22,8 @@ def webhook():
         nacir = Nacir(receiver_id = person_id)
         message = None
         file_list = None
-        
+        if person_id == "Y2lzY29zcGFyazovL3VzL1BFT1BMRS83YTRmMTg4Yi05YjZmLTQ5NzctOTdjYy00MDZhMTQ3NjZiYzg":
+            return 'OK'
         if not session.get('person_id'):
           session['person_id'] = person_id
           nacir.get_person_name()
