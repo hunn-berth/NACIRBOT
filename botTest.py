@@ -1,21 +1,16 @@
-import requests #Library for interacting with Webex API
+import requests #Libary for interacting with Webex API
 
 import json  
 
-import pandas as pd 
-
-import io #The io module is used for reading and working with streams
+import os 
 
 #from webex_bot.webex_bot import WebexBot 
 
-#flask, ngrok        
-
-#Webhook, Websocket
 
 
 url = "https://webexapis.com/v1/messages" #Global variable that all functions manipulate for sending a request
 botToken = "NTc2MzA2NTgtOGJjMC00ZTE0LWFiZDgtZDhhZjY5ZDYxYTFmOGMxNmM2OWUtOTZh_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f" #Add your token here, obtained from developer.webex
-sender = "hcarrill@cisco.com" #Sender email, used for testing purposes. Add your email!
+sender = "" #Sender email, used for testing purposes. Add your email!
 
 
 def sendMessage(): 
@@ -86,19 +81,16 @@ def printMessageFile(message):
     #The message itself its a dictionary so we should access its content using dictionary sintax                     
         fileUrl = message['files'][0]  #Accesing the first file of the message dictionary
 
-        print(f"The url for the file attached to the message is: {fileUrl}. \n displaying its content in csv format....")
+        print(f"The url for the file attached to the message is: {fileUrl}. \n displaying its content....")
 
-        headers = {"Authorization": f"Bearer {botToken}", "Accept": "text/csv"}
+        headers = {"Authorization": f"Bearer {botToken}", "Accept": "application/json"}
 
         #The url used for this request is not the webex api url that was used before. When the user sent a message containing a file, a new url for the file was created, that's the one we are using.
-        response = requests.get(fileUrl, headers=headers).content
-
-        df = pd.read_csv(io.StringIO(response.decode('utf-8'))) #Convert response data to an in-memory text string so that pandas can read from it
-
-        print(df.head())
+        response = requests.get(fileUrl, headers=headers)
 
 
-        print()
+
+        print(response.content)
 
     else:
         print('The message did not contain a file')
@@ -130,17 +122,52 @@ def listDirectMessages():
 
     #Helper function to check if message contains a file
     printMessageFile(mostRecentMessage) #{'id': "", 'roomId':"", 'files':"", 'text':""}
-    
+
+
+def createWebhook():
+
+    webhookCreationUrl = "https://webexapis.com/v1/webhooks"
+
+    headers = {"Authorization": f"Bearer {botToken}", "Accept": "application/json"}
+
+    payload = {'name': 'NACIR_webhook', 'targetUrl': 'https://0d8e-187-208-177-240.ngrok.io/webhook', 'resource': 'messages', 'event': 'created'}
+
+    response = requests.post(webhookCreationUrl, data=payload, headers= headers)
+
+    print(f'Created the webhook and got f{response.content}')
+
+def updateWebhook():
+
+    WEBHOOK_ID = os.environ["NACIR_WEBHOOK_ID"] 
+    API_KEY = os.environ["WEBEX_TEAMS_ACCESS_TOKEN"]
+    API_URL = f'https://webexapis.com/v1/webhooks/{WEBHOOK_ID}'
+    NGROK_URL = 'https://d35b-187-208-177-240.ngrok.io/webhook' 
+
+    headers = {"Authorization": f"Bearer {API_KEY}", "Accept": "application/json"}
+
+    payload = {'name': 'NACIR_webhook', 'targetUrl': NGROK_URL}
+
+    response = requests.put(API_URL, headers=headers, json = payload)
+
+    if response.status_code == 200: 
+        print('URL UPDATED: ' + NGROK_URL)
+    else: 
+        print(f'Failed to retrieve webhooks. Error code: {response.status_code}')
+
+
+
 
 
 def main():
+
+    updateWebhook()
 
     #Note that the getMessageInfo needs a messageID parameter, it can be obtained by using the sendMessage function and storing its value on a variable
 
     
     #messageID = sendMessage()
     #getMessageInfo(messageID)
-    listDirectMessages()
+    #listDirectMessages()
 
 
 main()

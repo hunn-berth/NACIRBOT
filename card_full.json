@@ -1,0 +1,171 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+        "type": "ColumnSet",
+        "columns": [
+            {
+            "type": "Column",
+            "items": [
+                {
+                "type": "Image",
+                "url": "https://www.svgrepo.com/show/345402/network-internet-online-connection-health-global-care.svg",
+                "size": "small",
+                "height": "50px"
+                }
+            ],
+            "width": "auto"
+            },
+            {
+            "type": "Column",
+            "items": [
+                {
+                "type": "TextBlock",
+                "text": "Webex App",
+                "weight": "Lighter",
+                "color": "Accent"
+                },
+                {
+                "type": "TextBlock",
+                "weight": "Bolder",
+                "text": "HEALTH CHECK",
+                "horizontalAlignment": "Left",
+                "wrap": true,
+                "color": "Light",
+                "size": "Large",
+                "spacing": "Small"
+                }
+            ],
+            "width": "stretch"
+            }
+        ]
+        },
+        {
+        "type": "ColumnSet",
+        "columns": [
+            {
+            "type": "Column",
+            "width": 35,
+            "items": [
+                {
+                "type": "TextBlock",
+                "text": "IP ADDRESS:",
+                "color": "Light"
+                },
+                {
+                "type": "TextBlock",
+                "text": "PID:",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "VERSION:",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "REACHABILITY:",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "OS TYPE:",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "Restconf:",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "Used memory:",
+                "color": "Light",
+                "spacing": "Small"
+                }
+            ]
+            },
+            {
+            "type": "Column",
+            "width": 65,
+            "items": [
+                {
+                "type": "TextBlock",
+                "text": "row['ip_address']",
+                "color": "Light"
+                },
+                {
+                "type": "TextBlock",
+                "text": "df[PID]",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "df[Version]",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "df[Reachability]",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "df[OS Type]",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "Not Supported",
+                "color": "Light",
+                "spacing": "Small"
+                },
+                {
+                "type": "TextBlock",
+                "text": "Not Supported",
+                "color": "good",
+                "spacing": "Small"
+                }
+            ]
+            }
+        ],
+        "spacing": "Padding",
+        "horizontalAlignment": "Center"
+        },
+        {
+            "type": "TextBlock",
+            "text": "BUGS BASED THIS PRODCT:",
+            "weight": "Bolder",
+            "color": "Light",
+            "size": "Large"
+        },
+        {
+        "type": "TextBlock",
+        "text": "N/A",
+        "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "ADVISORY BASED ON PRODUCT",
+            "weight": "Bolder",
+            "color": "Light",
+            "size": "Large"
+        },
+        {
+        "type": "TextBlock",
+        "text": "N/A",
+        "wrap": true
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3"
+    }
