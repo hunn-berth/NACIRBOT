@@ -141,7 +141,7 @@ def updateWebhook():
     WEBHOOK_ID = 'Y2lzY29zcGFyazovL3VzL1dFQkhPT0svMzgxNDAyZWQtOGJiYy00YjUwLThlMDYtZjFkOGU0YmQ5MmM4'
     API_KEY = 'NTc2MzA2NTgtOGJjMC00ZTE0LWFiZDgtZDhhZjY5ZDYxYTFmOGMxNmM2OWUtOTZh_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'
     API_URL = f'https://webexapis.com/v1/webhooks/{WEBHOOK_ID}'
-    NGROK_URL = 'https://0b7d-2001-420-c0c4-1001-00-ae.ngrok-free.app/webhook' 
+    NGROK_URL = 'https://d05f-2001-420-140e-1250-2daa-5899-42a8-3a2a.ngrok-free.app/webhook' 
 
     headers = {"Authorization": f"Bearer {API_KEY}", "Accept": "application/json"}
 

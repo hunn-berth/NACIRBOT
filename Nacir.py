@@ -32,6 +32,7 @@ class Nacir():
         self.request_handler.send_message(receiver_id = self.receiver_id, text = f'You did not upload a CSV file previously, please upload one using the devstat command')
 
     def send_previous_stats(self, previous_file_url):
+
         self.send_devstats(previous_file_url)
 
     def retrieve_message(self, message_id) -> str: 
@@ -70,6 +71,7 @@ class Nacir():
         #CHECK THIS !!!!
         file_content = self.request_handler.retrieve_file(file_url=file_url)
         csvStringIO = StringIO(file_content)
+        self.request_handler.send_message(self.receiver_id, text="I am processing your file, please be patient!") #TEST!!!!!!   
         try:
             df = pd.read_csv(csvStringIO, sep=',')
         except:

@@ -60,14 +60,8 @@
                             "weight": "Lighter",
                             "color": "Light",
                             "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "Prevstats",
-                            "weight": "Lighter",
-                            "color": "Light",
-                            "spacing": "Small"
                         }
+                    
                     ]
                 },
                 {
@@ -86,14 +80,8 @@
                             "color": "Light",
                             "weight": "Lighter",
                             "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "Provides statistics from last uploaded csv",
-                            "weight": "Lighter",
-                            "color": "Light",
-                            "spacing": "Small"
                         }
+                    
                     ]
                 }
             ],
